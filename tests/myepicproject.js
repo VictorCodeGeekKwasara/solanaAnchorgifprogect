@@ -42,7 +42,7 @@ const main = async() => {
 
   // Get the account again to see what changed.
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
-  console.log("'👀 GIF Count', account.totalGifs.toString()")
+  console.log('👀 GIF Count', account.totalGifs.toString())
 }
 
 const runMain = async () => {
