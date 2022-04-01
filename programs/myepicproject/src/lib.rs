@@ -14,10 +14,21 @@ pub mod myepicproject {
         Ok(())
     }
 
-    pub fn add_gif(ctx: Context<AddGif>)-> Result<()> {
+    // the function now accepts a gif_link param from the user. We also reference the user fro the Context
+    pub fn add_gif(ctx: Context<AddGif>, gif_link: String)-> Result<()> {
         // Get reference to the account  and  increament total_gifs.
 
         let base_account = &mut ctx.accounts.base_account ;
+        let user = &mut ctx.accounts.user ;
+
+        // Build the struct.
+        let item = ItemStruct {
+            gif_link: gif_link.to_string(),
+            user_address: *user.to_account_info().key ,
+        };
+
+        // Add it to the gif_list vector.
+        base_account.gif_list.push(item);
         base_account.total_gifs += 1 ;
 
         Ok(()) 
@@ -36,16 +47,28 @@ pub struct StartstuffOff<'info> {
 }
 // Specify what data you want in the Addgif Context.
 // Getting a handle on the flow of things :)? 
+// add a signer who calls the AddGif method tothe struct so tha we can save it
 
 #[derive(Accounts)]
 pub struct AddGif<'info> {
     #[account(mut)]
     pub base_account: Account<'info, BaseAccount>,
+    #[account(mut)]
+    pub user: Signer<'info>,
 }
 
-// Tell Solan what we want to store on this account.
+// Create a custom struct for us to work with.
+#[derive(Debug,Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct ItemStruct {
+    pub gif_link: String,
+    pub user_address: Pubkey,
+}
+
+// Tell Solana what we want to store on this account.
 
 #[account]
 pub struct BaseAccount {
     pub total_gifs: u64,
+    // Attach a vector of type ItemStruct to the account.
+    pub gif_list: Vec<ItemStruct>,
 }

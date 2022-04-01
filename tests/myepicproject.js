@@ -1,4 +1,5 @@
 const anchor = require("@project-serum/anchor");
+// const { findProgramAddressSync } = require("@project-serum/anchor/dist/cjs/utils/pubkey");
 
 // Need the system program, will talk about this soon.
 
@@ -26,23 +27,27 @@ const main = async() => {
     signers:[baseAccount],
   });
 
-  console.log("📝 Your transaction siganture", tx);
+  console.log("📝 Your transaction signature", tx);
 
   // Fetch data from the account.
   let account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('👀 GIF Count', account.totalGifs.toString());
 
-  //  Call add_gif!
+  // you will need to now pass a GIF link to the function! You'll also need to pass in the user submitting the GIF!
+      await program.rpc.addGif("insert_a_giphy_link_here", {
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+        }
+      })
 
-  await program.rpc.addGif({
-    accounts: {
-      baseAccount: baseAccount.publicKey,
-    }
-  })
-
-  // Get the account again to see what changed.
+  //call the account
+  
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
-  console.log('👀 GIF Count', account.totalGifs.toString())
+  console.log('👀 GIF Count', account.totalGifs.toString());
+
+  // Access the gif_list on the account!
+  console.log('👀 GIF List', account.gifList);
 }
 
 const runMain = async () => {
