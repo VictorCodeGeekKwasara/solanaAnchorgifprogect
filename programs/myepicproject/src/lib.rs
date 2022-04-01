@@ -4,15 +4,23 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
 pub mod myepicproject {
-    use super::*;
-    
+    use super::*;    
     pub fn start_stuff_off(ctx: Context<StartstuffOff>) -> Result<()> {
         // Get a reference to the account.
         let base_account = &mut ctx.accounts.base_account ;
 
-        // Initializs total_gifs
+        // Initialize total_gifs
         base_account.total_gifs = 0 ;
         Ok(())
+    }
+
+    pub fn add_gif(ctx: Context<AddGif>)-> Result<()> {
+        // Get reference to the account  and  increament total_gifs.
+
+        let base_account = &mut ctx.accounts.base_account ;
+        base_account.total_gifs += 1 ;
+
+        Ok(()) 
     }
 }
 
@@ -25,6 +33,14 @@ pub struct StartstuffOff<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program <'info, System>,
+}
+// Specify what data you want in the Addgif Context.
+// Getting a handle on the flow of things :)? 
+
+#[derive(Accounts)]
+pub struct AddGif<'info> {
+    #[account(mut)]
+    pub base_account: Account<'info, BaseAccount>,
 }
 
 // Tell Solan what we want to store on this account.
